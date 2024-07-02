@@ -11,11 +11,11 @@ public class ConcurrentBank  extends Thread {
     private List<Account> concurrentBankList = new ArrayList<>();
 
     public ConcurrentBank() {
-        bankLock = new ReentrantLock();
     //    condition = bankLock.newCondition();
     }
 
     public synchronized Account createAccount(int amount) {
+        bankLock = new ReentrantLock();
         Account account = new Account(id, amount);
         concurrentBankList.add(account);
         id++;
