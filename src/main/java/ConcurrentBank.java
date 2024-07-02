@@ -6,13 +6,13 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ConcurrentBank  extends Thread {
     private int id;
-    private Condition condition;
+    //private Condition condition;
     private Lock bankLock ;
     private List<Account> concurrentBankList = new ArrayList<>();
 
     public ConcurrentBank() {
         bankLock = new ReentrantLock();
-        condition = bankLock.newCondition();
+    //    condition = bankLock.newCondition();
     }
 
     public synchronized Account createAccount(int amount) {
@@ -57,13 +57,17 @@ public class ConcurrentBank  extends Thread {
     public void withdraw(Account account, int amount) throws InterruptedException {
         bankLock.lock();
         try {
-            while (account.getDeposit() < amount) {
-                condition.await();
+//            while (account.getDeposit() < amount) {
+//                condition.await();
+//            }
+            if (account.getDeposit()<amount){
+                System.out.println("Не достаточно средств");
             }
+            else {
                 System.out.print(Thread.currentThread());
                 account.setDeposit(account.getDeposit() - amount);
-                condition.signalAll();
-        }
+//                condition.signalAll();
+        }}
         finally {
             bankLock.unlock();
         }
@@ -72,13 +76,18 @@ public class ConcurrentBank  extends Thread {
     public void transfer(Account account1, Account account2, int amount) throws InterruptedException {
         bankLock.lock();
         try {
-            while (account1.getDeposit()<amount) {
-                condition.await();
+            if (account1.getDeposit()<amount){
+                System.out.println("Не достаточно средств");
             }
+//            while (account1.getDeposit()<amount) {
+//                condition.await();
+//            }
 //            account2.setDeposit(account2.getDeposit() + amount);
-            deposit(account2,amount);
-            withdraw(account1,amount);
-            condition.signalAll();
+           else {
+                deposit(account2, amount);
+                withdraw(account1, amount);
+            }
+    //        condition.signalAll();
 //           account1.setDeposit(account1.getDeposit() - amount);
         }
         finally {
